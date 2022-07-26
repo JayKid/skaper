@@ -51,11 +51,13 @@ impl Ui {
     }
 
     fn print_item(&mut self, item: String) {
-        write!(self.stdout, "{}\n", item).unwrap(); // New way of doing things in Termion
+        write!(self.stdout, "{}\r\n", item).unwrap();
+        self.stdout.flush().unwrap();
     }
 
-    fn print_selected_item(&self, item: String) {
-        println!("{} {}", String::from(item).cyan(), self.caret); // Old (?) way of doing things in Termion
+    fn print_selected_item(&mut self, item: String) {
+        write!(self.stdout, "{}{}\r\n", String::from(item).cyan(), self.caret).unwrap();
+        self.stdout.flush().unwrap();
     }
 
     fn move_caret_back(&mut self) {
