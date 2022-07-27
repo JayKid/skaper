@@ -7,11 +7,7 @@ use termion::input::TermRead;
 use termion::raw::{IntoRawMode, RawTerminal};
 
 use super::html_helper::htmlhelper::Result;
-
-pub struct Choice {
-    pub name: String,
-    pub action: Box<dyn Fn() -> Vec<Result>>,
-}
+use super::options::Choice;
 
 pub struct Ui {
     pub caret: ColoredString,
