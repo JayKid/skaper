@@ -2,8 +2,8 @@
 use scraper::{Html, Selector};
 
 pub struct Result {
-    name: String,
-    price: String,
+    pub name: String,
+    pub price: String,
 }
 
 pub struct HtmlHelper {
@@ -35,7 +35,7 @@ impl HtmlHelper {
         item_selector: String,
         name_subselector: String,
         price_subselector: String,
-    ) {
+    ) -> Vec<Result> {
         let document = Html::parse_document(&self.html); // This would be inefficient if selecting several times per document
         let selector = Selector::parse(&item_selector).unwrap();
 
@@ -63,14 +63,12 @@ impl HtmlHelper {
                 element.select(&price_selector).for_each(|subelement| {
                     result.price = subelement.inner_html();
                 });
-    
-                println!("{}\r", result.name);
-                println!("{}\r", result.price);
-    
+
                 results.push(result);
             }
         }
         println!("Found {} items\r", results.len());
+        return results;
     }
 }
 

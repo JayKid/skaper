@@ -6,9 +6,11 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::{IntoRawMode, RawTerminal};
 
+use super::html_helper::htmlhelper::Result;
+
 pub struct Choice {
     pub name: String,
-    pub action: Box<dyn Fn() -> ()>,
+    pub action: Box<dyn Fn() -> Vec<Result>>,
 }
 
 pub struct Ui {
@@ -38,6 +40,14 @@ impl Ui {
         }
     }
 
+    fn display_results(&mut self, results: Vec<Result>) {
+        println!("Printing results\r\r");
+        for result in results {
+            self.print_item_name(result.name);
+            self.print_item_price(result.price);
+        }
+    }
+
     fn navigate_up(&mut self) {
         if self.current_index_selected != 0 {
             self.current_index_selected = max(0, self.current_index_selected - 1);
@@ -48,6 +58,16 @@ impl Ui {
     fn navigate_down(&mut self) {
         self.current_index_selected = min(self.current_index_selected + 1, self.options.len() - 1);
         self.refresh();
+    }
+
+    fn print_item_name(&mut self, name: String) {
+        write!(self.stdout, "{}\r\n", name.bright_blue()).unwrap();
+        self.stdout.flush().unwrap();
+    }
+
+    fn print_item_price(&mut self, price: String) {
+        write!(self.stdout, "{}\r\n", price).unwrap();
+        self.stdout.flush().unwrap();
     }
 
     fn print_item(&mut self, item: String) {
@@ -82,7 +102,7 @@ impl Ui {
 
     fn select_option(&mut self) {
         let results = (self.options[self.current_index_selected].action)();
-        write!(self.stdout, "{:?}", results).unwrap();
+        self.display_results(results);
     }
 
     fn listen_for_keys(&mut self) {
