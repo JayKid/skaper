@@ -18,6 +18,7 @@ fn main() {
         ..Default::default()
     };
     let options = get_menu_options();
+
     ui_service.init(options, stdout);
     ui_service.refresh();
 }
