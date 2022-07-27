@@ -1,11 +1,18 @@
 extern crate termion;
 
+// bringing the module into scope
+mod html_helper;
+use html_helper::htmlutils::get_example_html;
+
+// Terminal I/O crates
 use colored::*;
 use std::cmp::{max, min};
 use std::io::{stdin, stdout, Stdout, Write};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::{IntoRawMode, RawTerminal};
+
+use crate::html_helper::htmlhelper::get_html_handler;
 
 struct Choice {
     name: String,
@@ -56,7 +63,13 @@ impl Ui {
     }
 
     fn print_selected_item(&mut self, item: String) {
-        write!(self.stdout, "{}{}\r\n", String::from(item).cyan(), self.caret).unwrap();
+        write!(
+            self.stdout,
+            "{}{}\r\n",
+            String::from(item).cyan(),
+            self.caret
+        )
+        .unwrap();
         self.stdout.flush().unwrap();
     }
 
@@ -99,7 +112,7 @@ impl Ui {
 impl Default for Ui {
     fn default() -> Ui {
         Ui {
-            caret: String::from("<-").magenta(),
+            caret: String::from(" <-").magenta(),
             options: Vec::from([]),
             current_index_selected: 0,
             stdout: stdout().into_raw_mode().unwrap(),
@@ -120,18 +133,27 @@ fn main() {
     let options = vec![
         Choice {
             name: String::from("3090 TI"),
-            action: Box::new(get_results),
+            action: Box::new(something),
         },
         Choice {
             name: String::from("3090"),
-            action: Box::new(get_results),
+            action: Box::new(something),
         },
         Choice {
             name: String::from("3080 TI"),
-            action: Box::new(get_results),
+            action: Box::new(something),
         },
     ];
     ui_service.init(options, stdout);
     ui_service.refresh();
     ui_service.listen_for_keys();
+}
+
+fn something() {
+    // TO-DO: Move this to network calls
+    let website_contents = get_example_html();
+
+    let mut html_helper = get_html_handler();
+    html_helper.parse_html(website_contents);
+    let selector = html_helper.select(".item.media .first_price>.price".to_string());
 }
