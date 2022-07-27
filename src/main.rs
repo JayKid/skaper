@@ -21,11 +21,11 @@ fn main() {
         },
         Choice {
             name: String::from("3090"),
-            action: Box::new(action_3090_ti),
+            action: Box::new(action_3090),
         },
         Choice {
             name: String::from("3080 TI"),
-            action: Box::new(action_3090_ti),
+            action: Box::new(action_3080_ti),
         },
     ];
     ui_service.init(options, stdout);
@@ -41,4 +41,25 @@ fn action_3090_ti() {
     // Ideally we would return results here that we can process/display however we want
     let selector = html_helper.select(".item.media .first_price>.price".to_string());
     // Display that currently happens within select should happen below
+}
+
+fn action_3090() {
+  let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3090&cat=%5BPC-Grafikkarten%5D"));
+
+  let mut html_helper = html_helper::htmlhelper::get_instance();
+  html_helper.parse_html(website_contents);
+
+  // Ideally we would return results here that we can process/display however we want
+  let selector = html_helper.select(".item.media .first_price>.price".to_string());
+  // Display that currently happens within select should happen below
+}
+fn action_3080_ti() {
+  let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3080+ti&cat=%5BPC-Grafikkarten%5D"));
+
+  let mut html_helper = html_helper::htmlhelper::get_instance();
+  html_helper.parse_html(website_contents);
+
+  // Ideally we would return results here that we can process/display however we want
+  let selector = html_helper.select(".item.media .first_price>.price".to_string());
+  // Display that currently happens within select should happen below
 }
