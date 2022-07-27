@@ -8,10 +8,6 @@ use ui::{Ui, Choice};
 use std::io::{stdout};
 use termion::raw::{IntoRawMode};
 
-pub fn get_results() {
-    vec!["a", "b", "c"];
-}
-
 fn main() {
     let stdout = stdout().into_raw_mode().unwrap();
 
