@@ -12,7 +12,7 @@ impl HtmlHelper {
     }
 
     pub fn select(&self, selector: String) {
-        let document = Html::parse_document(&self.html);
+        let document = Html::parse_document(&self.html); // This would be inefficient if selecting several times per document
         let selector = Selector::parse(&selector).unwrap();
 
         let mut results: Vec<String> = Vec::new();
