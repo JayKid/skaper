@@ -1,6 +1,11 @@
 // HTML Scraper crate
 use scraper::{Html, Selector};
 
+pub struct Result {
+    name: String,
+    price: String,
+}
+
 pub struct HtmlHelper {
     html: String,
 }
@@ -11,21 +16,66 @@ impl HtmlHelper {
         self.html = html_contents;
     }
 
-    pub fn select(&self, selector: String) {
-        let document = Html::parse_document(&self.html); // This would be inefficient if selecting several times per document
-        let selector = Selector::parse(&selector).unwrap();
+    fn is_valid_result(&self, haystack: String, search_term: String) -> bool {
+        if search_term.is_empty() {
+            return true;
+        }
+        let mut compressed_haystack = String::from(haystack);
+        compressed_haystack.retain(|c| c != ' ');
+        compressed_haystack = compressed_haystack.to_lowercase();
+        let mut compressed_search_term = String::from(search_term);
+        compressed_search_term.retain(|c| c != ' ');
+        compressed_search_term = compressed_search_term.to_lowercase();
+        return compressed_haystack.contains(&compressed_search_term);
+    }
 
-        let mut results: Vec<String> = Vec::new();
+    pub fn select(
+        &self,
+        search_term: String,
+        item_selector: String,
+        name_subselector: String,
+        price_subselector: String,
+    ) {
+        let document = Html::parse_document(&self.html); // This would be inefficient if selecting several times per document
+        let selector = Selector::parse(&item_selector).unwrap();
+
+        let mut results: Vec<Result> = Vec::new();
 
         for element in document.select(&selector) {
-            println!("Item name TBD:\r");
-            println!("{:?}\r",element.inner_html());
-            results.push(element.inner_html());
+            let mut result = Result {
+                name: String::from(""),
+                price: String::from(""),
+            };
+            let name_selector = Selector::parse(&name_subselector).unwrap();
+            let mut skip_element = false;
+
+            element.select(&name_selector).for_each(|subelement| {
+                if !self.is_valid_result(subelement.inner_html(), search_term.clone()) {
+                    skip_element = true;
+                    return;
+                }
+                result.name = subelement.inner_html();
+            });
+
+            if !skip_element {
+                let price_selector = Selector::parse(&price_subselector).unwrap();
+
+                element.select(&price_selector).for_each(|subelement| {
+                    result.price = subelement.inner_html();
+                });
+    
+                println!("{}\r", result.name);
+                println!("{}\r", result.price);
+    
+                results.push(result);
+            }
         }
         println!("Found {} items\r", results.len());
     }
 }
 
 pub fn get_instance() -> HtmlHelper {
-    return HtmlHelper { html: String::from("") }
+    return HtmlHelper {
+        html: String::from(""),
+    };
 }

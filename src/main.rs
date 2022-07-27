@@ -3,10 +3,10 @@ extern crate termion;
 mod html_helper;
 mod network;
 mod ui;
-use ui::{Ui, Choice};
+use ui::{Choice, Ui};
 
-use std::io::{stdout};
-use termion::raw::{IntoRawMode};
+use std::io::stdout;
+use termion::raw::IntoRawMode;
 
 fn main() {
     let stdout = stdout().into_raw_mode().unwrap();
@@ -15,6 +15,14 @@ fn main() {
         ..Default::default()
     };
     let options = vec![
+        Choice {
+            name: String::from("Preispirat Elektronik"),
+            action: Box::new(preispirat_elektronik),
+        },
+        // Choice {
+        //     name: String::from("Preispirat GPUs"),
+        //     action: Box::new(preispirat_gpus),
+        // },
         Choice {
             name: String::from("3090 TI"),
             action: Box::new(action_3090_ti),
@@ -39,27 +47,57 @@ fn action_3090_ti() {
     html_helper.parse_html(website_contents);
 
     // Ideally we would return results here that we can process/display however we want
-    let selector = html_helper.select(".item.media .first_price>.price".to_string());
+    let _ = html_helper.select(
+        "3090 TI".to_string(),
+        ".item.media".to_string(),
+        ".media-heading>a".to_string(),
+        ".first_price>.price".to_string(),
+    );
     // Display that currently happens within select should happen below
 }
 
 fn action_3090() {
-  let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3090&cat=%5BPC-Grafikkarten%5D"));
+    let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3090&cat=%5BPC-Grafikkarten%5D"));
 
-  let mut html_helper = html_helper::htmlhelper::get_instance();
-  html_helper.parse_html(website_contents);
+    let mut html_helper = html_helper::htmlhelper::get_instance();
+    html_helper.parse_html(website_contents);
 
-  // Ideally we would return results here that we can process/display however we want
-  let selector = html_helper.select(".item.media .first_price>.price".to_string());
-  // Display that currently happens within select should happen below
+    // Ideally we would return results here that we can process/display however we want
+    let _ = html_helper.select(
+        "3090".to_string(),
+        ".item.media".to_string(),
+        ".media-heading>a".to_string(),
+        ".first_price>.price".to_string(),
+    );
+    // Display that currently happens within select should happen below
 }
 fn action_3080_ti() {
-  let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3080+ti&cat=%5BPC-Grafikkarten%5D"));
+    let website_contents = network::fetch(String::from("https://www.orderflow.ch/de/search?limit=100&sort=price%7Casc&q=3080+ti&cat=%5BPC-Grafikkarten%5D"));
 
-  let mut html_helper = html_helper::htmlhelper::get_instance();
-  html_helper.parse_html(website_contents);
+    let mut html_helper = html_helper::htmlhelper::get_instance();
+    html_helper.parse_html(website_contents);
 
-  // Ideally we would return results here that we can process/display however we want
-  let selector = html_helper.select(".item.media .first_price>.price".to_string());
-  // Display that currently happens within select should happen below
+    // Ideally we would return results here that we can process/display however we want
+    let _ = html_helper.select(
+        "3080 TI".to_string(),
+        ".item.media".to_string(),
+        ".media-heading>a".to_string(),
+        ".first_price>.price".to_string(),
+    );
+    // Display that currently happens within select should happen below
+}
+fn preispirat_elektronik() {
+    let website_contents = network::fetch(String::from("https://www.preispirat.ch/elektronik/"));
+
+    let mut html_helper = html_helper::htmlhelper::get_instance();
+    html_helper.parse_html(website_contents);
+
+    // Ideally we would return results here that we can process/display however we want
+    let _ = html_helper.select(
+        "".to_string(),
+        ".news-community".to_string(),
+        ".newstitle>a".to_string(),
+        ".rh_regular_price".to_string(),
+    );
+    // Display that currently happens within select should happen below
 }
