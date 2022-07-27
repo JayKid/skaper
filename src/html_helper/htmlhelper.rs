@@ -7,8 +7,8 @@ pub struct HtmlHelper {
 
 impl HtmlHelper {
     // Consider re-implementing with: https://docs.rs/thirtyfour/latest/thirtyfour/extensions/query/index.html
-    pub fn parse_html(&mut self, html_contents: &str) {
-        self.html = String::from(html_contents);
+    pub fn parse_html(&mut self, html_contents: String) {
+        self.html = html_contents;
     }
 
     pub fn select(&self, selector: String) {
@@ -26,6 +26,6 @@ impl HtmlHelper {
     }
 }
 
-pub fn get_html_handler() -> HtmlHelper {
+pub fn get_instance() -> HtmlHelper {
     return HtmlHelper { html: String::from("") }
 }
